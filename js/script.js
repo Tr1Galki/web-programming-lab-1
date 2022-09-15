@@ -1,77 +1,163 @@
-let submit_param = document.getElementById("submit_button");
+let formValueX,
+    formValueY,
+    formValueR;
 
-submit_param.addEventListener("click", function (e) {
-    e.preventDefault()
-    let x_param_value = getX();
-    let y_param_value = getY();
-    let r_param_value = getR();
-    // if ((y_param_value !== false) && (r_param_value !== false)){
-    //     alert("gg")
-    // }
-    let xhr = new XMLHttpRequest();
-    xhr.open("get", "../php/server.php?x=" + x_param_value + "&y=" + y_param_value + "&r=" + r_param_value[0]
-    + "&startTime=" + new Date().getTime() + '&timeZone=' + new Date().getTimezoneOffset())
-    xhr.onloadend = () => {
-        showRequest(xhr.status, xhr.responseText)
-    }
-    xhr.send()
+
+let inputFormX = document.querySelectorAll("input[name='x_param']");
+
+for (let i = 0; i < inputFormX.length; i++) { //when page start, x is undefined
+    inputFormX[i].addEventListener("change", (e) => {
+        formValueX = e.target.value;
+        console.log(formValueX);
+    })
+}
+
+let inputFormY = document.querySelector("#y_input");
+
+inputFormY.addEventListener("input", (e) => {
+    formValueY = e.target.value;
+    console.log(formValueY);
 })
 
-function showRequest(status, text){
-    // result_table.createElement("tr")
-    // alert(JSON.parse(text).date)
-    alert(text)
-    let table = document.querySelector(".table--main")
-    let new_row = table.insertRow(-1)
-    let answer_cell = new_row.insertCell(0);
-    answer_cell.appendChild(document.createTextNode(JSON.parse(text).answer));
-    let x_cell = new_row.insertCell(1);
-    x_cell.appendChild(document.createTextNode(JSON.parse(text).x));
-    let y_cell = new_row.insertCell(2);
-    y_cell.appendChild(document.createTextNode(JSON.parse(text).y));
-    let r_cell = new_row.insertCell(3);
-    r_cell.appendChild(document.createTextNode(JSON.parse(text).r));
-    let date_cell = new_row.insertCell(4);
-    date_cell.appendChild(document.createTextNode(JSON.parse(text).date));
-    let time_cell = new_row.insertCell(5);
-    time_cell.appendChild(document.createTextNode(JSON.parse(text).time));
+let inputFormR = document.querySelectorAll("input[name='r_param']");
 
-}
-
-function getX() {
-    return document.querySelector("input[name='x_param']:checked").value
-}
-
-function getY() {
-    let y_value = document.getElementById("y_input").value.trim().replaceAll(",", ".");
-    const Y_MIN = -5
-    const Y_MAX = 3
-    if (y_value.length === 0) {
-        alert("Field Y can't be empty'")
-        return false
-    } else if (/^-?\d*(\.?\d+)?$/.test(y_value)) {
-        y_value = parseFloat(y_value)
-        if (y_value <= Y_MIN || y_value >= Y_MAX) {
-            alert("Y is out of range")
-            return false
+for (let i = 0; i < inputFormR.length; i++) { //when page start, x is undefined
+    inputFormR[i].addEventListener("change", (e) => {
+        let x = e.target.value
+        if (!formValueR) {
+            formValueR = [];
+        }
+        if (e.target.checked) {
+            if (!formValueR.includes(x)) {
+                formValueR.push(x)
+            }
         } else {
-            return y_value
+            let index = formValueR.indexOf(x);
+            if (index !== -1) {
+                formValueR.splice(index, 1);
+            }
+        }
+        console.log(formValueR);
+    })
+}
+
+let submit = document.querySelector("#submit_button");
+
+submit.addEventListener("click", facade);
+
+
+function facade(e) {
+    e.preventDefault()
+    let newValueX = getX(formValueX);
+    let newValueY = getY(formValueY);
+    let newValueR = getR(formValueR);
+
+    if (newValueX && newValueY && newValueR) {
+        sendDataToServer(newValueX, newValueY, newValueR);
+    }
+}
+
+
+function getX(currX) {
+    if ([-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2].includes(parseFloat(currX))) {
+        return currX;
+    }
+    let currFormX = document.querySelectorAll("input[name='x_param']");
+    if (currFormX.length !== 9) {
+        location.reload();
+    } else {
+        // Надо добавить обработку
+        return null;
+    }
+}
+
+function getY(currY) {
+    if (!currY || !(currY.trim())) {
+        if (document.querySelector("#y_input")) {
+            //обработать что пустое Y
+            return null
+        } else {
+            location.reload();
         }
     } else {
-        alert("Please write a number")
-        return false
+        currY = currY.trim().replaceAll(",", ".")
+        if (/^-?\d*(\.?\d+)?$/.test(currY)) {
+            currY = parseFloat(currY)
+            if (currY > -5 && currY < 3) {
+                return currY
+            } else {
+                if (currY > 3) {
+                    // обработка Y > 3
+                    return null
+                } else {
+                    // обработка Y < -5
+                    return null
+                }
+            }
+        } else {
+            if (document.querySelector("#y_input")) {
+                // обработать нечисловое Y
+                return null;
+            } else {
+                location.reload();
+            }
+        }
     }
 }
 
-function getR() {
-    let z_boxes = document.querySelectorAll("input[name='z_param']:checked");
-    if (z_boxes.length === 0) {
-        alert("choose Z")
-        return false
+function getR(currR) {
+    if (!currR) {
+        let currFormR = document.querySelectorAll("input[name='r_param']");
+        if (currFormR.length !== 5) {
+            location.reload();
+        } else {
+            // Надо добавить обработку
+            return null;
+        }
+    } else {
+        if (Array.isArray(currR)) {
+            let isCorrect = true;
+            for (let i = 0; i < currR.length; i++) {
+                if (![1, 1.5, 2, 2.5, 3].includes(parseFloat(currR[i]))) {
+                    isCorrect = false;
+                }
+            }
+            if (isCorrect) {
+                return currR;
+            } else {
+                let currFormR = document.querySelectorAll("input[name='r_param']:checked");
+                if (currFormR.length !== 0) {
+                    currR = [];
+                    for (let i = 0; i < currFormR.length; i++) {
+                        currR.push(i.value);
+                    }
+                    return currR;
+                } else {
+                    // обработать отсутсвие выборов у чела
+                    return null;
+                }
+            }
+        } else {
+            // хз когда такое возможно но стоит чекнуть
+            return null;
+        }
     }
-    let z_value = null;
-    for (let i = 0; i < z_boxes.length; i++) {
-        z_value = (z_boxes[i].value)
+}
+
+function sendDataToServer(valX, valY, valR) {
+    let params = "?x=" + valX + "&y=" + valY + "&r=" + valR + "&startTime=" + new Date().getTime() + '&timeZone=' + new Date().getTimezoneOffset();
+    let xhr = new XMLHttpRequest();
+    xhr.open("get", "../php/server.php?" + params);
+    xhr.onloadend = () => {
+        requestToTable(xhr.status, xhr.responseText);
     }
-    return z_value
+    xhr.send();
+}
+
+function requestToTable(status, response){
+    console.log(response);
+}
+
+function isValidate() {
+
 }
