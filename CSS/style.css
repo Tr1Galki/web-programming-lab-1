@@ -1,0 +1,66 @@
+html {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+
+    font-size: 15px;
+    line-height: 1.3;
+    color: #333;
+}
+
+body {
+    background-color: #1E1E20;
+    color: white;
+    justify-content: center;
+}
+
+
+.header {
+    font-weight: 800;
+    font-size: 250%;
+    padding-top: 20px;
+    text-align: center;
+}
+
+.main__form {
+    width: 75%;
+    font-size: 120%;
+    padding-top: 20px;
+    margin: 0 auto;
+}
+
+.form__group {
+    border-color: rgba(255, 255, 255, 0.4);
+    border-radius: 7px;
+}
+
+.table__container {
+    padding-top: 30px;
+}
+
+.table--main {
+    margin: 0 auto;
+    table-layout: fixed;
+    width: 60%;
+    border-collapse: collapse;
+    border-radius: 10px;
+}
+
+td, th {
+    border: 1px solid rgb(70, 70, 70);
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+
+/* ---- particles.js container ---- */
+
+#particles-js {
+    width: 100%;
+    height: 100%;
+    background-color: #1E1E20;
+    background-size: cover;
+    background-position: 50% 50%;
+    position: fixed;
+    z-index: -1;
+}
