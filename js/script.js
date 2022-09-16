@@ -52,8 +52,10 @@ function facade(e) {
     let newValueY = getY(formValueY);
     let newValueR = getR(formValueR);
 
-    if (newValueX && newValueY && newValueR) {
-        sendDataToServer(newValueX, newValueY, newValueR);
+    if (newValueX && (newValueY || newValueY === 0) && newValueR) {
+        for (let i = 0; i < newValueR.length; i++) {
+            sendDataToServer(newValueX, newValueY, newValueR[i]);
+        }
     }
 }
 
@@ -72,7 +74,7 @@ function getX(currX) {
 }
 
 function getY(currY) {
-    if (!currY || !(currY.trim())) {
+    if ((!currY || !(currY.trim())) && (currY !== 0)) {
         if (document.querySelector("#y_input")) {
             //обработать что пустое Y
             return null
@@ -147,17 +149,42 @@ function getR(currR) {
 function sendDataToServer(valX, valY, valR) {
     let params = "?x=" + valX + "&y=" + valY + "&r=" + valR + "&startTime=" + new Date().getTime() + '&timeZone=' + new Date().getTimezoneOffset();
     let xhr = new XMLHttpRequest();
-    xhr.open("get", "../php/server.php?" + params);
+    xhr.open("GET", "../php/server.php" + params);
     xhr.onloadend = () => {
         requestToTable(xhr.status, xhr.responseText);
     }
     xhr.send();
 }
 
-function requestToTable(status, response){
-    console.log(response);
-}
-
-function isValidate() {
-
+function requestToTable(status, response) {
+    if (!JSON.parse(response).correct) {
+        //обработка
+    } else {
+        if (!document.querySelector(".table--main")) {
+            if (!document.querySelector(".table__container")){
+                let divTable = document.createElement("div");
+                divTable.classList.add("table__container")
+                document.body.appendChild(divTable);
+            }
+            let divTable = document.querySelector(".table__container");
+            let table = document.createElement("table");
+            table.classList.add("table--main");
+            divTable.appendChild(table);
+            let new_row = table.insertRow(0);
+            new_row.insertCell(0).appendChild(document.createTextNode('Is in area?'));
+            new_row.insertCell(1).appendChild(document.createTextNode('X value'));
+            new_row.insertCell(2).appendChild(document.createTextNode('Y value'));
+            new_row.insertCell(3).appendChild(document.createTextNode('R value'));
+            new_row.insertCell(4).appendChild(document.createTextNode('Date'));
+            new_row.insertCell(5).appendChild(document.createTextNode('Script\'s time'));
+        }
+        let table = document.querySelector(".table--main")
+        let new_row = table.insertRow(1)
+        new_row.insertCell(0).appendChild(document.createTextNode(JSON.parse(response).isIn));
+        new_row.insertCell(1).appendChild(document.createTextNode(JSON.parse(response).x));
+        new_row.insertCell(2).appendChild(document.createTextNode(JSON.parse(response).y));
+        new_row.insertCell(3).appendChild(document.createTextNode(JSON.parse(response).r));
+        new_row.insertCell(4).appendChild(document.createTextNode(JSON.parse(response).date));
+        new_row.insertCell(5).appendChild(document.createTextNode(JSON.parse(response).time));
+    }
 }

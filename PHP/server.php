@@ -1,69 +1,79 @@
 <?php
 session_start();
 
-$x = $_GET['x'];
-$y = $_GET['y'];
-$r = $_GET['r'];
+$valX = $_GET['x'];
+$valY = $_GET['y'];
+$valR = $_GET['r'];
 $startTime = $_GET['startTime'];
 $timeZone = $_GET['timeZone'];
-$answer = checkGraph($x, $y, $r);
+$correct = check($valX, $valY, $valR);
+$answer = isInGraph($valX, $valY, $valR, $correct);
 $array = [
+    'correct' => $correct,
     'isIn' => $answer,
-    'x' => $x,
-    'y' => $y,
-    'r' => $r,
+    'x' => $valX,
+    'y' => $valY,
+    'r' => $valR,
     'date' => date('d.m.Y H:i:s', time() - $timeZone * 60),
     'time' => round(microtime(true) * 1000 - $startTime, 4),
 ];
 echo json_encode($array);
 
 
-function checkX($x)
+function isInGraph($x, $y, $r, $corr)
 {
-    return isset($x);
-}
-
-function checkY($y)
-{
-    return (isset($y) && is_numeric(str_replace(',', '.', $y)));
-}
-
-function checkR($r)
-{
-    return isset($r);
-}
-
-function checkGraph($x, $y, $r)
-{
-    if (!checkX($x) || !checkY($y) || !checkR($r)) {
+    if (!$corr) {
         return false;
     }
-
-    if ($x >= 0 && $y >= 0) {
-
-        if ($y <= $r && $x <= $r) {
-            return true;
+    if ($x >= 0) {
+        if ($y >= 0) {
+            return checkSquare($x, $y, $r);
         } else {
-            return false;
+            return checkCircle($x, $y, $r);
         }
-
-    } elseif ($x >= 0 && $y <= 0) {
-
-        if (sqrt($x * $x + $y * $y) <= $r) {
-            return true;
+    } else {
+        if ($y > 0) {
+            return false;
         } else {
-            return false;
+            return checkTriangle($x, $y, $r);
         }
+    }
+}
 
-    } elseif ($x >= 0 && $y <= 0) {
-
-        if ($x < -2 * $r - 1 || $y < -0.5 * $r - 1){
-            return true;
-        } else { return false; }
+function check($x, $y, $r)
+{
+    if (isset($x) && isset($y) && isset($r) && is_numeric(str_replace(',', '.', $y)) &&  is_numeric($x) && is_numeric($r) && $y > -5 && $y < 3) {
+        return true;
     } else {
         return false;
     }
 }
 
+function checkSquare($x, $y, $r)
+{
+    if (($x <= $r) && ($y <= $r)){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function checkCircle($x, $y, $r)
+{
+    if ($x*$x + $y*$y <= ($r/4)){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function checkTriangle($x, $y, $r)
+{
+    if ($y > -0.5*$x-$r){
+        return true;
+    } else {
+        return false;
+    }
+}
 ?>
 

@@ -49,7 +49,14 @@ td, th {
     border: 1px solid rgb(70, 70, 70);
     padding: 20px;
     text-align: center;
-    border-radius: 10px;
+    transition: .15s all ease;
+}
+
+td:hover, th:hover {
+    -moz-box-shadow: 0 0 15px #000;
+    -webkit-box-shadow: 0 0 15px #000;
+    box-shadow: 0 0 15px #000;
+    transition: .15s all ease;
 }
 
 
