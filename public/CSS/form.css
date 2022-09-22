@@ -98,8 +98,6 @@ input[type="checkbox"]:checked + label:before, input[type="radio"]:checked + lab
 
 /* Transition */
 label, label::before {
-    -webkit-transition: .25s all ease;
-    -o-transition: .25s all ease;
     transition: .25s all ease;
 }
 
@@ -108,3 +106,14 @@ input[type="checkbox"], input[type="radio"] {
     opacity: 0;
     z-index: -1;
 }
+
+.error {
+    padding-bottom: 20px;
+    color: red;
+    display: none;
+}
+
+#empty_X, #empty_Y, #empty_R {
+    display: block;
+}
+

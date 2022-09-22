@@ -8,7 +8,8 @@ let inputFormX = document.querySelectorAll("input[name='x_param']");
 for (let i = 0; i < inputFormX.length; i++) { //when page start, x is undefined
     inputFormX[i].addEventListener("change", (e) => {
         formValueX = e.target.value;
-        console.log(formValueX);
+        let elem = document.querySelector("#empty_X");
+        elem.style.display = "none";
     })
 }
 
@@ -16,12 +17,34 @@ let inputFormY = document.querySelector("#y_input");
 
 inputFormY.addEventListener("input", (e) => {
     formValueY = e.target.value;
-    console.log(formValueY);
+    let elemEmpty = document.querySelector("#empty_Y");
+    let elemNum = document.querySelector("#not_number_Y");
+    let elemRange = document.querySelector("#Y_is_out_of_range");
+    if ((!formValueY || !(formValueY.trim())) && (formValueY !== 0)) {
+        elemEmpty.style.display = "block";
+        elemNum.style.display = "none";
+        elemRange.style.display = "none";
+    } else {
+        elemEmpty.style.display = "none";
+        if (/^-?\d*(\.?\d+)?$/.test(formValueY)) {
+            let currY = parseFloat(formValueY)
+            if (currY > -5 && currY < 3) {
+                elemNum.style.display = "none";
+                elemRange.style.display = "none";
+            } else {
+                elemNum.style.display = "none";
+                elemRange.style.display = "block";
+            }
+        } else {
+            elemNum.style.display = "block";
+            elemRange.style.display = "none";
+        }
+    }
 })
 
 let inputFormR = document.querySelectorAll("input[name='r_param']");
 
-for (let i = 0; i < inputFormR.length; i++) { //when page start, x is undefined
+for (let i = 0; i < inputFormR.length; i++) {
     inputFormR[i].addEventListener("change", (e) => {
         let x = e.target.value
         if (!formValueR) {
@@ -37,14 +60,18 @@ for (let i = 0; i < inputFormR.length; i++) { //when page start, x is undefined
                 formValueR.splice(index, 1);
             }
         }
-        console.log(formValueR);
+        let elem = document.querySelector("#empty_R");
+        if (formValueR.length === 0) {
+            elem.style.display = "block";
+        } else {
+            elem.style.display = "none";
+        }
     })
 }
 
 let submit = document.querySelector("#submit_button");
 
 submit.addEventListener("click", facade);
-
 
 function facade(e) {
     e.preventDefault()
@@ -59,7 +86,6 @@ function facade(e) {
     }
 }
 
-
 function getX(currX) {
     if ([-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2].includes(parseFloat(currX))) {
         return currX;
@@ -68,7 +94,7 @@ function getX(currX) {
     if (currFormX.length !== 9) {
         location.reload();
     } else {
-        // Надо добавить обработку
+        userError("empty_X");
         return null;
     }
 }
@@ -76,8 +102,8 @@ function getX(currX) {
 function getY(currY) {
     if ((!currY || !(currY.trim())) && (currY !== 0)) {
         if (document.querySelector("#y_input")) {
-            //обработать что пустое Y
-            return null
+            userError("empty_Y");
+            return null;
         } else {
             location.reload();
         }
@@ -88,17 +114,12 @@ function getY(currY) {
             if (currY > -5 && currY < 3) {
                 return currY
             } else {
-                if (currY > 3) {
-                    // обработка Y > 3
-                    return null
-                } else {
-                    // обработка Y < -5
-                    return null
-                }
+                userError("Y_is_out_of_range");
+                return null;
             }
         } else {
             if (document.querySelector("#y_input")) {
-                // обработать нечисловое Y
+                userError("not_number_Y");
                 return null;
             } else {
                 location.reload();
@@ -113,7 +134,7 @@ function getR(currR) {
         if (currFormR.length !== 5) {
             location.reload();
         } else {
-            // Надо добавить обработку
+            userError("empty_R");
             return null;
         }
     } else {
@@ -135,12 +156,11 @@ function getR(currR) {
                     }
                     return currR;
                 } else {
-                    // обработать отсутсвие выборов у чела
+                    userError("empty_R");
                     return null;
                 }
             }
         } else {
-            // хз когда такое возможно но стоит чекнуть
             return null;
         }
     }
@@ -149,7 +169,7 @@ function getR(currR) {
 function sendDataToServer(valX, valY, valR) {
     let params = "?x=" + valX + "&y=" + valY + "&r=" + valR + "&startTime=" + new Date().getTime() + '&timeZone=' + new Date().getTimezoneOffset();
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", "../php/server.php" + params);
+    xhr.open("GET", "https://se.ifmo.ru/~s335066/server.php" + params);
     xhr.onloadend = () => {
         requestToTable(xhr.status, xhr.responseText);
     }
@@ -157,11 +177,14 @@ function sendDataToServer(valX, valY, valR) {
 }
 
 function requestToTable(status, response) {
+    if (!response) {
+        return
+    }
     if (!JSON.parse(response).correct) {
         //обработка
     } else {
         if (!document.querySelector(".table--main")) {
-            if (!document.querySelector(".table__container")){
+            if (!document.querySelector(".table__container")) {
                 let divTable = document.createElement("div");
                 divTable.classList.add("table__container")
                 document.body.appendChild(divTable);
@@ -185,6 +208,14 @@ function requestToTable(status, response) {
         new_row.insertCell(2).appendChild(document.createTextNode(JSON.parse(response).y));
         new_row.insertCell(3).appendChild(document.createTextNode(JSON.parse(response).r));
         new_row.insertCell(4).appendChild(document.createTextNode(JSON.parse(response).date));
-        new_row.insertCell(5).appendChild(document.createTextNode(JSON.parse(response).time));
+        new_row.insertCell(5).appendChild(document.createTextNode(Math.abs(JSON.parse(response).time)));
     }
+}
+
+function userError(id) {
+    let elem = document.querySelector("#" + id);
+    elem.style.display = "block";
+    setTimeout(() => {
+        elem.style.display = "none";
+    }, 5000)
 }

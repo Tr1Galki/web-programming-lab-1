@@ -13,7 +13,7 @@
 
 <!-- scripts -->
 <script src="../js/libs/particles.js"></script>
-<script src="../js/libs/app.js"></script>
+<script src="../js/libs/app_particular.js"></script>
 <script src="../js/script.js" defer></script>
 
 <header class="header">
@@ -63,8 +63,20 @@
                 <input type="radio" id="x9" name="x_param" value="2">
                 <label for="x9">2</label>
             </div>
+            <div class="error" id="empty_X">
+                Please select X
+            </div>
             <div class="group--buttons">
                 <span class="group--text"> choose Y: </span><input type="text" id="y_input" maxlength="15">
+            </div>
+            <div class="error" id="empty_Y">
+                Y cannot be empty
+            </div>
+            <div class="error" id="not_number_Y">
+                Y must be a number
+            </div>
+            <div class="error" id="Y_is_out_of_range">
+                Y is out of range (-5; 3)
             </div>
             <div class="group--buttons">
                 <span class="group--text">choose R:</span>
@@ -82,6 +94,9 @@
 
                 <input type="checkbox" id="r5" name="r_param" value="3">
                 <label for="r5">3</label>
+            </div>
+            <div class="error" id="empty_R">
+                Please select R
             </div>
             <div class="button--sender">
                 <button type="submit" id="submit_button">Submit</button>

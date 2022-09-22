@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>lab1</title>
+
+    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="CSS/form.css">
+    <link rel="stylesheet" href="CSS/auth.css">
+
+    <script type="module" defer src="js/app.js"></script>
+    <script defer src="js/numpad.js"></script>
+</head>
+
+<body>
+
+<!-- particles.js container -->
+<div id="particles-js"></div>
+
+<!-- scripts -->
+<script src="js/libs/particles.js"></script>
+<script src="js/libs/app_particular.js"></script>
+
+<div class="main--container">
+    <div class="phone--container">
+        <div class="container">
+            <label for="phone_number"> Your phone number: </label>
+            <input type="tel" id="phone_number" readonly/>
+            <button id="sign_in_button">Enter phone number</button>
+            <span class="auth_error" id="first_plus">Number must start by plus</span>
+            <span class="auth_error" id="incorrect">This number does not exist</span>
+        </div>
+        <table id="numpad">
+            <tr>
+                <td id="num1" class="numpad_data">1</td>
+                <td id="num2" class="numpad_data">2</td>
+                <td id="num3" class="numpad_data">3</td>
+            </tr>
+            <tr>
+                <td id="num4" class="numpad_data">4</td>
+                <td id="num5" class="numpad_data">5</td>
+                <td id="num6" class="numpad_data">6</td>
+            </tr>
+            <tr>
+                <td id="num7" class="numpad_data">7</td>
+                <td id="num8" class="numpad_data">8</td>
+                <td id="num9" class="numpad_data">9</td>
+            </tr>
+            <tr>
+                <td id="numPlus" class="numpad_data">+</td>
+                <td id="num0" class="numpad_data">0</td>
+                <td id="numDel" class="numpad_data">Del</td>
+            </tr>
+        </table>
+    </div>
+    <div class="sms--container">
+        <div class="container">
+            <label for="sms_code_form"> Your SMS number: </label>
+            <input type="text" id="sms_code_form" readonly/>
+            <button id="confirm_code">Enter SMS</button>
+            <span class="auth_error" id="invalid_sms_code">This SMS code is invalid</span>
+        </div>
+        <table id="numpad_1">
+            <tr>
+                <td id="num1_1" class="numpad_data">1</td>
+                <td id="num2_1" class="numpad_data">2</td>
+                <td id="num3_1" class="numpad_data">3</td>
+            </tr>
+            <tr>
+                <td id="num4_1" class="numpad_data">4</td>
+                <td id="num5_1" class="numpad_data">5</td>
+                <td id="num6_1" class="numpad_data">6</td>
+            </tr>
+            <tr>
+                <td id="num7_1" class="numpad_data">7</td>
+                <td id="num8_1" class="numpad_data">8</td>
+                <td id="num9_1" class="numpad_data">9</td>
+            </tr>
+            <tr>
+                <td id="num0_1" class="numpad_data">0</td>
+                <td id="numDel_1" class="numpad_data" colspan="2">Del</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!-- Add a container for reCaptcha -->
+<div id="recaptcha-container"></div>
+
+</body>
+
+</html>
