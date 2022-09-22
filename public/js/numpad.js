@@ -98,7 +98,7 @@ num5_1.addEventListener('click', function (e) {
 })
 
 num6_1 = document.querySelector("#num6_1");
-num6.addEventListener('click', function (e) {
+num6_1.addEventListener('click', function (e) {
     formSMS.value += '6';
 })
 num7_1 = document.querySelector("#num7_1");
